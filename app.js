@@ -21,6 +21,15 @@ const NO_SENTENCE_IPA = new Set([
   'toward', 'under', 'up', 'while', 'within', 'without'
 ]);
 
+const FINITE_VERBS = new Set([
+  'am', 'are', 'ate', 'be', 'been', 'bought', 'brought', 'built', 'came', 'can', 'cooked', 'do', 'does',
+  'eat', 'eats', 'felt', 'flew', 'flows', 'found', 'gets', 'go', 'goes', 'grow', 'had', 'has', 'have', 'heard',
+  'is', 'kicked', 'learned', 'likes', 'live', 'lives', 'looked', 'made', 'make', 'met', 'moved', 'packed',
+  'paid', 'played', 'pulled', 'ran', 'rang', 'rains', 'read', 'rises', 'sang', 'saw', 'sent', 'shared', 'shop',
+  'sing', 'slept', 'smiled', 'spoke', 'stay', 'studies', 'swims', 'took', 'use', 'wagged', 'walk', 'wash',
+  'was', 'wears', 'went', 'were', 'will', 'won', 'wrote'
+]);
+
 const EXAMPLES = {
   'about':'Tell me about your new puppy.', 'above':'A bird flew above the trees.', 'a lot (of)':'We have a lot of crayons.', 'again':'Please read the story again.', 'ago':'We moved here a year ago.', 'airport':'We met Grandma at the airport.', 'always':'I always wash my hands.', 'animal':'That animal has a long tail.', 'as':'Use this box as a table.',
   'bacon':'Dad cooked bacon for breakfast.', 'bank':'Mom went to the bank.', 'barbecue (BBQ)':'We had a barbecue in the yard.', 'beach':'We built a castle on the beach.', 'because':'I smiled because I was happy.', 'bell':'The school bell rang.', 'bookstore':'We found a book at the bookstore.', 'boring':'The long wait was boring.', 'bread':'Please pass me the bread.', 'breakfast':'I eat breakfast before school.', 'bring':'Please bring your coat.', 'build':'We can build a tall tower.', 'building':'That building has many windows.', 'bulletin board':'My picture is on the bulletin board.', 'busy':'Mom is busy making dinner.', 'but':'I want juice, but we have milk.', 'butter':'Put butter on the warm bread.', 'by':'The cat sat by the door.',
@@ -70,9 +79,12 @@ function appendAnnotatedWord(parent, rawWord) {
 }
 
 function appendAnnotatedText(parent, text, skipFunctionWords = false) {
-  (text.match(/[A-Za-z]+(?:'[A-Za-z]+)?|[^A-Za-z]+/g) || [text]).forEach((token) => {
+  const tokens = text.match(/[A-Za-z]+(?:'[A-Za-z]+)?|[^A-Za-z]+/g) || [text];
+  const firstVerb = tokens.findIndex((token) => FINITE_VERBS.has(token.toLowerCase()));
+  tokens.forEach((token, index) => {
     if (/^[A-Za-z]/.test(token)) {
-      if (skipFunctionWords && NO_SENTENCE_IPA.has(token.toLowerCase())) parent.append(token);
+      const isSubject = skipFunctionWords && firstVerb > 0 && index < firstVerb;
+      if (skipFunctionWords && (NO_SENTENCE_IPA.has(token.toLowerCase()) || isSubject)) parent.append(token);
       else appendAnnotatedWord(parent, token);
     }
     else parent.append(token);
