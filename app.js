@@ -27,6 +27,14 @@ function vowelGroupAt(word, index) {
 function appendAnnotatedWord(parent, rawWord) {
   const vowels = WORD_VOWELS[rawWord.toLowerCase()];
   if (!vowels) { parent.append(rawWord); return; }
+  const groups = [];
+  let groupCursor = 0;
+  while (groupCursor < rawWord.length) {
+    const groupText = vowelGroupAt(rawWord, groupCursor);
+    if (groupText) groups.push(groupText);
+    groupCursor += groupText ? groupText.length : 1;
+  }
+  if (groups.length !== vowels.length) { parent.append(rawWord); return; }
   let cursor = 0;
   let vowelIndex = 0;
   while (cursor < rawWord.length) {
@@ -37,7 +45,7 @@ function appendAnnotatedWord(parent, rawWord) {
     group.textContent = groupText;
     const symbol = document.createElement('span');
     symbol.className = 'vowel-symbol';
-    symbol.textContent = `/${vowels[vowelIndex] || '?'}/`;
+    symbol.textContent = `/${vowels[vowelIndex]}/`;
     group.append(symbol);
     parent.append(group);
     cursor += groupText.length;
@@ -87,10 +95,9 @@ function render() {
     const button = document.createElement('button'); button.className = 'word'; button.type = 'button'; appendAnnotatedText(button, word);
     button.setAttribute('aria-label', `播放 ${word}`); button.addEventListener('click', () => speak(word, button));
     const translation = document.createElement('p'); translation.className = 'meaning'; translation.textContent = meaning;
-    const vowels = document.createElement('p'); vowels.className = 'vowel-guide'; vowels.textContent = `母音音標：${LEVEL_FOUR_VOWELS[word].map((sound) => `/${sound}/`).join(' · ')}`;
-    const example = document.createElement('button'); example.className = 'example'; example.type = 'button'; example.textContent = `Example: ${EXAMPLES[word]}`;
+    const example = document.createElement('button'); example.className = 'example'; example.type = 'button'; appendAnnotatedText(example, EXAMPLES[word]);
     example.setAttribute('aria-label', `播放例句：${EXAMPLES[word]}`); example.addEventListener('click', () => speak(EXAMPLES[word], example));
-    card.append(number, button, translation, vowels, example); list.append(card);
+    card.append(number, button, translation, example); list.append(card);
   });
 }
 search.addEventListener('input', render);
