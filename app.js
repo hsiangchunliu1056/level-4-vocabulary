@@ -5,6 +5,14 @@ const status = document.querySelector('#voice-status');
 const stopButton = document.querySelector('#stop-speaking');
 let activeButton = null;
 
+const IPA_VOWELS = {
+  AA: String.fromCharCode(0x0251), AE: String.fromCharCode(0x00e6), AH: String.fromCharCode(0x0259),
+  AO: String.fromCharCode(0x0254), AW: `a${String.fromCharCode(0x028a)}`, AY: `a${String.fromCharCode(0x026a)}`,
+  EH: String.fromCharCode(0x025b), ER: String.fromCharCode(0x025a), EY: `e${String.fromCharCode(0x026a)}`,
+  IH: String.fromCharCode(0x026a), IY: 'i', OW: `o${String.fromCharCode(0x028a)}`,
+  OY: `${String.fromCharCode(0x0254)}${String.fromCharCode(0x026a)}`, UH: String.fromCharCode(0x028a), UW: 'u'
+};
+
 const EXAMPLES = {
   'about':'Tell me about your new puppy.', 'above':'A bird flew above the trees.', 'a lot (of)':'We have a lot of crayons.', 'again':'Please read the story again.', 'ago':'We moved here a year ago.', 'airport':'We met Grandma at the airport.', 'always':'I always wash my hands.', 'animal':'That animal has a long tail.', 'as':'Use this box as a table.',
   'bacon':'Dad cooked bacon for breakfast.', 'bank':'Mom went to the bank.', 'barbecue (BBQ)':'We had a barbecue in the yard.', 'beach':'We built a castle on the beach.', 'because':'I smiled because I was happy.', 'bell':'The school bell rang.', 'bookstore':'We found a book at the bookstore.', 'boring':'The long wait was boring.', 'bread':'Please pass me the bread.', 'breakfast':'I eat breakfast before school.', 'bring':'Please bring your coat.', 'build':'We can build a tall tower.', 'building':'That building has many windows.', 'bulletin board':'My picture is on the bulletin board.', 'busy':'Mom is busy making dinner.', 'but':'I want juice, but we have milk.', 'butter':'Put butter on the warm bread.', 'by':'The cat sat by the door.',
@@ -45,7 +53,7 @@ function appendAnnotatedWord(parent, rawWord) {
     group.textContent = groupText;
     const symbol = document.createElement('span');
     symbol.className = 'vowel-symbol';
-    symbol.textContent = `/${vowels[vowelIndex]}/`;
+    symbol.textContent = `/${IPA_VOWELS[vowels[vowelIndex]]}/`;
     group.append(symbol);
     parent.append(group);
     cursor += groupText.length;
