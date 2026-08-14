@@ -41,7 +41,7 @@ const EXAMPLES = {
 };
 
 function vowelGroupAt(word, index) {
-  return word.slice(index).match(/^(ai|au|aw|ay|ea|ee|ei|ey|ie|oa|oe|oi|oo|ou|ow|oy|ue|ui|[aeiouy])/i)?.[0] || '';
+  return word.slice(index).match(/^(ai|au|aw|ay|ea|ee|ei|ey|ie|io|oa|oe|oi|oo|ou|ow|oy|ue|ui|[aeiouy])/i)?.[0] || '';
 }
 
 function appendAnnotatedWord(parent, rawWord) {
