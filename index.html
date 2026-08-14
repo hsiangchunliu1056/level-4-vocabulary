@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Level 4 英文單字發音練習">
   <title>Level 4 英文單字｜點擊發音</title>
-  <link rel="stylesheet" href="styles.css?v=20260813-ipa-fix">
+  <link rel="stylesheet" href="styles.css?v=20260814-quiz">
 </head>
 <body>
   <main class="page-shell">
@@ -19,6 +19,11 @@
       </div>
       <p id="voice-status" class="voice-status" aria-live="polite">準備好了</p>
     </header>
+    <section class="quiz-panel" aria-labelledby="quiz-title">
+      <div><p class="quiz-kicker">QUIZ</p><h2 id="quiz-title">範圍測驗</h2><p class="quiz-help">輸入編號範圍，例如 61-65；會隨機出發音、聽力與拼字題。</p></div>
+      <form id="quiz-form" class="quiz-form"><label for="quiz-range">題目範圍</label><input id="quiz-range" type="text" inputmode="numeric" placeholder="例如：61-65" aria-describedby="quiz-error"><button type="submit">開始測驗</button></form>
+      <p id="quiz-error" class="quiz-error" aria-live="polite"></p><div id="quiz-area" class="quiz-area" hidden></div>
+    </section>
     <section class="word-section" aria-label="單字清單">
       <div class="list-heading"><p id="result-count"></p><p class="hint">點擊任一張卡片中的單字即可播放。</p></div>
       <div id="word-list" class="word-list"></div>
@@ -26,6 +31,6 @@
   </main>
   <script src="data.js?v=20260813-ipa-fix"></script>
   <script src="phonetics.js?v=20260813-ipa-fix"></script>
-  <script src="app.js?v=20260813-subjects"></script>
+  <script src="app.js?v=20260814-quiz"></script>
 </body>
 </html>
