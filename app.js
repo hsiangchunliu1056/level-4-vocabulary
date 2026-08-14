@@ -3,6 +3,10 @@ const search = document.querySelector('#search');
 const count = document.querySelector('#result-count');
 const status = document.querySelector('#voice-status');
 const stopButton = document.querySelector('#stop-speaking');
+const quizForm = document.querySelector('#quiz-form');
+const quizRange = document.querySelector('#quiz-range');
+const quizError = document.querySelector('#quiz-error');
+const quizArea = document.querySelector('#quiz-area');
 let activeButton = null;
 
 const IPA_VOWELS = {
@@ -131,6 +135,74 @@ function render() {
     card.append(number, button, translation, example); list.append(card);
   });
 }
+
+function shuffle(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function vowelSounds(word) {
+  return (word.match(/[A-Za-z]+/g) || []).flatMap((part) => (WORD_VOWELS[part.toLowerCase()] || []).map((sound) => `/${IPA_VOWELS[sound]}/`)).join(' ');
+}
+
+function makeChoices(answer, pool) {
+  return shuffle([answer, ...shuffle(pool.filter((item) => item.word !== answer.word)).slice(0, 3)]);
+}
+
+function showQuestion(questions, index, score) {
+  const question = questions[index];
+  quizArea.replaceChildren();
+  const progress = document.createElement('p'); progress.className = 'quiz-progress'; progress.textContent = `第 ${index + 1} 題／共 ${questions.length} 題　答對 ${score} 題`;
+  const type = document.createElement('p'); type.className = 'quiz-type';
+  const prompt = document.createElement('h3');
+  const feedback = document.createElement('p'); feedback.className = 'quiz-feedback';
+  const next = (correct) => {
+    feedback.textContent = correct ? '答對了！' : `正確答案：${question.word}`;
+    feedback.classList.toggle('wrong', !correct);
+    quizArea.querySelectorAll('button, input').forEach((element) => { element.disabled = true; });
+    const nextButton = document.createElement('button'); nextButton.type = 'button'; nextButton.className = 'quiz-next';
+    nextButton.textContent = index + 1 === questions.length ? '查看成績' : '下一題';
+    nextButton.addEventListener('click', () => {
+      if (index + 1 === questions.length) {
+        quizArea.innerHTML = `<h3>測驗完成</h3><p class="quiz-score">你答對 ${score + (correct ? 1 : 0)}／${questions.length} 題</p>`;
+      } else showQuestion(questions, index + 1, score + (correct ? 1 : 0));
+    });
+    quizArea.append(nextButton);
+  };
+  if (question.kind === 'pronunciation') {
+    type.textContent = '發音題'; prompt.textContent = `哪個單字的母音發音是：${vowelSounds(question.word)}？`;
+    makeChoices(question, question.pool).forEach((choice) => {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'quiz-choice'; button.textContent = choice.word;
+      button.addEventListener('click', () => next(choice.word === question.word)); quizArea.append(button);
+    });
+  } else if (question.kind === 'listening') {
+    type.textContent = '聽力題'; prompt.textContent = '聽完發音後，選出正確單字。';
+    const replay = document.createElement('button'); replay.type = 'button'; replay.className = 'quiz-replay'; replay.textContent = '▶ 播放發音'; replay.addEventListener('click', () => speak(question.word, replay)); quizArea.append(replay);
+    makeChoices(question, question.pool).forEach((choice) => {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'quiz-choice'; button.textContent = choice.word;
+      button.addEventListener('click', () => next(choice.word === question.word)); quizArea.append(button);
+    });
+    setTimeout(() => speak(question.word, replay), 150);
+  } else {
+    type.textContent = '拼字題'; prompt.textContent = `請拼出「${question.meaning}」的英文單字。`;
+    const input = document.createElement('input'); input.type = 'text'; input.className = 'quiz-spelling'; input.autocomplete = 'off'; input.placeholder = '輸入英文單字';
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'quiz-next'; button.textContent = '確認答案';
+    button.addEventListener('click', () => next(input.value.trim().toLowerCase() === question.word.toLowerCase())); quizArea.append(input, button);
+  }
+  quizArea.prepend(progress, type, prompt); quizArea.append(feedback);
+}
+
+quizForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const match = quizRange.value.trim().match(/^(\d+)\s*-\s*(\d+)$/);
+  if (!match) { quizError.textContent = '請輸入範圍，例如 61-65。'; return; }
+  const start = Number(match[1]); const end = Number(match[2]);
+  const selected = LEVEL_FOUR_WORDS.filter((item) => item.id >= Math.min(start, end) && item.id <= Math.max(start, end));
+  if (!selected.length) { quizError.textContent = '這個範圍沒有單字，請重新輸入。'; return; }
+  quizError.textContent = ''; quizArea.hidden = false;
+  const questions = shuffle(selected).map((item, index) => ({ ...item, pool: selected, kind: ['pronunciation', 'listening', 'spelling'][index % 3] }));
+  showQuestion(questions, 0, 0);
+});
+
 search.addEventListener('input', render);
 stopButton.addEventListener('click', () => { stopSpeaking(); status.textContent = '已停止發音'; });
 window.addEventListener('beforeunload', stopSpeaking);
