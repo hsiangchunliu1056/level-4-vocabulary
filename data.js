@@ -1,4 +1,4 @@
-window.LEVEL_FOUR_WORDS = [
+const RAW_LEVEL_FOUR_WORDS = [
   ['about','關於'],['above','在…之上'],['a lot (of)','許多'],['again','再一次'],['ago','…以前'],['airport','機場'],['always','總是'],['animal','動物'],['as','好像；當作'],
   ['bacon','培根'],['bank','銀行'],['barbecue (BBQ)','烤肉'],['beach','海灘'],['because','因為'],['bell','鈴；鐘'],['bookstore','書店'],['boring','無趣的'],['bread','麵包'],['breakfast','早餐'],['bring','帶來'],['build','建造'],['building','建築物'],['bulletin board','布告欄'],['busy','忙碌的'],['but','但是'],['butter','奶油'],['by','藉由…'],
   ['calendar','日曆'],['can','罐（頭）'],['cap','鴨舌帽'],['carrier','快遞員；宅配員'],['carry','攜帶'],['city','城市'],['clean','清潔；乾淨的'],['close','接近的；親密的'],['correct','正確的'],['country','國家；鄉下'],['crazy','瘋狂的'],['crocodile','鱷魚'],['cut','剪；切'],['cute','可愛的'],
@@ -11,4 +11,34 @@ window.LEVEL_FOUR_WORDS = [
   ['park','公園；停車'],['pay','付錢'],['pepper','胡椒粉'],['pick','挑選；採摘'],['pick up','撿起；以車接（人）'],['player','演奏者；球員'],['playground','遊樂場；操場'],['police station','警察局'],['pork','豬肉'],['postcard','明信片'],['post office','郵局'],['puppy','小狗'],['rarely','很少；難得'],['river','河'],
   ['salt','鹽'],['sausage','香腸'],['say','說'],['science','科學'],['scientist','科學家'],['sea','海'],['seat','座位'],['seesaw','翹翹板'],['seldom','不常；很少'],['send','寄；發送'],['shop','商店；購物'],['slide','滑梯'],['slow','慢的'],['smile','微笑'],['snack','點心'],['snowman','雪人'],['sometimes','有時候'],['station','局；所；站'],['stay','停留'],['street','街道'],['strong','強壯的'],['student','學生'],['study','學習；研讀'],['sugar','糖'],['supermarket','超級市場'],['sweet','甜的'],['swing','鞦韆'],
   ['take off','脫掉'],['teach','教'],['television','電視'],['tell','說；告訴'],['test','考試'],['than','比；比較'],['theirs','他們的'],['thirsty','口渴的'],['thousand','（一）千'],['tonight','今晚'],['town','城鎮'],['train station','火車站'],['turn','轉動；翻；輪流'],['turn off','關掉'],['turn on','打開'],['twice','兩次'],['usually','通常'],['vegetable','蔬菜'],['village','村莊'],['visit','拜訪；參觀'],['wait','等待'],['weak','虛弱的'],['week','星期'],['weekend','週末'],['wet','濕的'],['which','哪個'],['whose','誰的'],['why','為什麼'],['wonderful','令人驚奇的；極好的'],['world','世界'],['would','將要'],['wrong','錯誤的'],['yard','院子'],['year','年'],['yesterday','昨天'],['yours','你的；你們的']
-].map(([word, meaning], index) => ({ id: index + 1, word, meaning }));
+];
+
+const BOOK_ORDER = [
+  'thousand',
+  'boring','busy','clean','close','correct','crazy','cute','dark','dirty','dry','fast','fun','funny','high','interesting','large','last (night / week)','low','only','slow','strong','sweet','thirsty','weak','wet','wonderful','wrong',
+  'again','ago','once','twice','would',
+  'animal','crocodile','giraffe','gorilla','hippo (hippopotamus)','kitten','puppy',
+  'always','never','often','rarely','seldom','sometimes','usually',
+  'bacon','bread','butter','can','fruit','honey','jam','ketchup','meat','pepper','pork','salt','sausage','snack','sugar','vegetable',
+  'bell','bulletin board','calendar','English','ground','math','note (s)','notebook','playground','science','seat','seesaw','slide','student','swing','test',
+  'carrier','magician','mail carrier','musician','player','scientist',
+  'barbecue (BBQ)','breakfast','cap','dinner','dryer','email','idea','jar','letter','lunch','magic','mail','meal','mind','oven','postcard','smile','snowman','television','turn','world',
+  'about','above','as','by','for','near','off',
+  'hers','his','its','mine','ours','theirs','yours',
+  'which','whose','why',
+  'tonight','week','weekend','year','yesterday',
+  'airport','bank','beach','bookstore','building','city','country','fire station','flower shop','forest','garden','lake','mountain','park','police station','post office','river','sea','shop','station','street','supermarket','town','train station','village','yard',
+  'bring','build','carry','cut','find','hear','help','leave','look for','pay','pick','pick up','say','send','stay','study','take off','teach','tell','turn off','turn on','visit','wait',
+  'a lot (of)','because','but','than'
+];
+
+if (BOOK_ORDER.length !== RAW_LEVEL_FOUR_WORDS.length || new Set(BOOK_ORDER).size !== BOOK_ORDER.length) {
+  throw new Error('課本單字排序資料不完整或有重複。');
+}
+
+const RAW_BY_WORD = new Map(RAW_LEVEL_FOUR_WORDS);
+window.LEVEL_FOUR_WORDS = BOOK_ORDER.map((word, index) => {
+  const meaning = RAW_BY_WORD.get(word);
+  if (!meaning) throw new Error(`找不到單字：${word}`);
+  return { id: index + 1, word, meaning };
+});
