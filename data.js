@@ -16,7 +16,7 @@ const RAW_LEVEL_FOUR_WORDS = [
 const BOOK_ORDER = [
   'thousand',
   'boring','busy','clean','close','correct','crazy','cute','dark','dirty','dry','fast','fun','funny','high','interesting','large','last (night / week)','low','only','slow','strong','sweet','thirsty','weak','wet','wonderful','wrong',
-  'again','ago','once','twice','would',
+  'again','ago',['only','只'],'once','twice','would',
   'animal','crocodile','giraffe','gorilla','hippo (hippopotamus)','kitten','puppy',
   'always','never','often','rarely','seldom','sometimes','usually',
   'bacon','bread','butter','can','fruit','honey','jam','ketchup','meat','pepper','pork','salt','sausage','snack','sugar','vegetable',
@@ -32,13 +32,18 @@ const BOOK_ORDER = [
   'a lot (of)','because','but','than'
 ];
 
-if (BOOK_ORDER.length !== RAW_LEVEL_FOUR_WORDS.length || new Set(BOOK_ORDER).size !== BOOK_ORDER.length) {
+const RAW_BY_WORD = new Map(RAW_LEVEL_FOUR_WORDS);
+const ORDERED_ENTRIES = BOOK_ORDER.map((entry) => {
+  if (Array.isArray(entry)) return entry;
+  const meaning = RAW_BY_WORD.get(entry);
+  if (!meaning) throw new Error(`找不到單字：${entry}`);
+  return [entry, meaning];
+});
+
+if (ORDERED_ENTRIES.length !== RAW_LEVEL_FOUR_WORDS.length + 1 || new Set(ORDERED_ENTRIES.map(([word]) => word)).size !== RAW_LEVEL_FOUR_WORDS.length) {
   throw new Error('課本單字排序資料不完整或有重複。');
 }
 
-const RAW_BY_WORD = new Map(RAW_LEVEL_FOUR_WORDS);
-window.LEVEL_FOUR_WORDS = BOOK_ORDER.map((word, index) => {
-  const meaning = RAW_BY_WORD.get(word);
-  if (!meaning) throw new Error(`找不到單字：${word}`);
+window.LEVEL_FOUR_WORDS = ORDERED_ENTRIES.map(([word, meaning], index) => {
   return { id: index + 1, word, meaning };
 });
