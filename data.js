@@ -22,7 +22,7 @@ const BOOK_ORDER = [
   'bacon','bread','butter','can','fruit','honey','jam','ketchup','meat','pepper','pork','salt','sausage','snack','sugar','vegetable',
   'bell','bulletin board','calendar','English','ground','math','note (s)','notebook','playground','science','seat','seesaw','slide','student','swing','test',
   'carrier','magician','mail carrier','musician','player','scientist',
-  'barbecue (BBQ)','breakfast','cap','dinner','dryer','email','idea','jar','letter','lunch','magic','mail','meal','mind','oven','postcard','smile','snowman','television','turn','world',
+  'barbecue (BBQ)','breakfast','cap','dinner','dryer','email',['fun','樂趣'],'idea','jar','letter','lunch','magic','mail','meal','mind','oven','postcard','smile','snowman','television','turn','world',
   'about','above','as','by','for','near','off',
   'hers','his','its','mine','ours','theirs','yours',
   'which','whose','why',
@@ -40,7 +40,7 @@ const ORDERED_ENTRIES = BOOK_ORDER.map((entry) => {
   return [entry, meaning];
 });
 
-if (ORDERED_ENTRIES.length !== RAW_LEVEL_FOUR_WORDS.length + 1 || new Set(ORDERED_ENTRIES.map(([word]) => word)).size !== RAW_LEVEL_FOUR_WORDS.length) {
+if (ORDERED_ENTRIES.length !== RAW_LEVEL_FOUR_WORDS.length + 2 || new Set(ORDERED_ENTRIES.map(([word]) => word)).size !== RAW_LEVEL_FOUR_WORDS.length) {
   throw new Error('課本單字排序資料不完整或有重複。');
 }
 
