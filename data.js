@@ -28,7 +28,7 @@ const BOOK_ORDER = [
   'which','whose','why',
   'tonight','week','weekend','year','yesterday',
   'airport','bank','beach','bookstore','building','city','country','fire station','flower shop','forest','garden','lake','mountain','park','police station','post office','river','sea','shop','station','street','supermarket','town','train station','village','yard',
-  'bring','build','carry','cut','find','hear','help','leave','look for','pay','pick','pick up','say','send','stay','study','take off','teach','tell','turn off','turn on','visit','wait',
+  'bring','build','carry',['clean','清潔'],'cut','find','hear','help','leave','look for','pay','pick','pick up','say','send','stay','study','take off','teach','tell','turn off','turn on','visit','wait',
   'a lot (of)','because','but','than'
 ];
 
@@ -40,7 +40,7 @@ const ORDERED_ENTRIES = BOOK_ORDER.map((entry) => {
   return [entry, meaning];
 });
 
-if (ORDERED_ENTRIES.length !== RAW_LEVEL_FOUR_WORDS.length + 2 || new Set(ORDERED_ENTRIES.map(([word]) => word)).size !== RAW_LEVEL_FOUR_WORDS.length) {
+if (ORDERED_ENTRIES.length !== RAW_LEVEL_FOUR_WORDS.length + 3 || new Set(ORDERED_ENTRIES.map(([word]) => word)).size !== RAW_LEVEL_FOUR_WORDS.length) {
   throw new Error('課本單字排序資料不完整或有重複。');
 }
 
